@@ -46,11 +46,13 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\BSPNode.cs" />
-     <Compile Include="Assets\BSPTree.cs" />
-     <Compile Include="Assets\Digger.cs" />
-     <Compile Include="Assets\Grid.cs" />
-     <Compile Include="Assets\RoomCreator.cs" />
+     <Compile Include="Assets\LevelGenerator.cs" />
+     <Compile Include="Assets\Room.cs" />
+     <Compile Include="Assets\v1\BSPNode.cs" />
+     <Compile Include="Assets\v1\BSPTree.cs" />
+     <Compile Include="Assets\v1\Digger.cs" />
+     <Compile Include="Assets\v1\Grid.cs" />
+     <Compile Include="Assets\v1\RoomCreator.cs" />
  <Reference Include="Assembly-UnityScript-firstpass">
  <HintPath>C:/Users/Working/Documents/PuzzleLevel_Generation/Library/ScriptAssemblies/Assembly-UnityScript-firstpass.dll</HintPath>
  </Reference>
