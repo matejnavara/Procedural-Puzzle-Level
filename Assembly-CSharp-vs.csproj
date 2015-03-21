@@ -53,6 +53,7 @@
      <Compile Include="Assets\v1\Digger.cs" />
      <Compile Include="Assets\v1\Grid.cs" />
      <Compile Include="Assets\v1\RoomCreator.cs" />
+     <None Include="Assets\Standard Assets\Skyboxes\_skybox info.txt" />
  <Reference Include="Assembly-UnityScript-firstpass">
  <HintPath>C:/Users/Working/Documents/PuzzleLevel_Generation/Library/ScriptAssemblies/Assembly-UnityScript-firstpass.dll</HintPath>
  </Reference>

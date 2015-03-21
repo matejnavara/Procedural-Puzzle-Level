@@ -53,6 +53,7 @@
      <Compile Include="Assets\v1\Digger.cs" />
      <Compile Include="Assets\v1\Grid.cs" />
      <Compile Include="Assets\v1\RoomCreator.cs" />
+     <None Include="Assets\Standard Assets\Skyboxes\_skybox info.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.1/UnityEngine.UI.dll</HintPath>
  </Reference>

@@ -8,37 +8,26 @@ public class LevelGenerator : MonoBehaviour
 		public int sizeX = 200;
 		public int sizeY = 200;
 		public int nbrRooms = 18;
+		public bool thirdPerson = false;
 
 		// Use this for initialization
 		void Start ()
 		{
-				int[,] map;
-				map = CreateLevelSquares (sizeX, sizeY, nbrRooms);
 
-				int roomCount;
-				roomCount = FindRooms (map, sizeX, sizeY);
+		int[,] map;
+		map = CreateLevelSquares (sizeX, sizeY, nbrRooms);
 
-
-
-		int[,] start;
-		start = getRoom (map, 1);
-		bool playerSpawned = false;
-
-		for (int i = 0; i < sizeX; i++) {
-						for (int j = 0; j < sizeY; j++) {
-						if(start[i,j] == 1 && !playerSpawned){
-					GameObject player = (GameObject) Instantiate(Resources.Load("Player"),new Vector3(i+5,5,j+5),Quaternion.identity);
-					playerSpawned = true;
-				}
-			}
-		}
+		int roomCount;
+		roomCount = FindRooms (map, sizeX, sizeY);
 
 		for (int i = 1; i <= roomCount; i++) {
 			FindNeighbour (map, i);
 		}
 
 		BuildFloor (map, sizeX, sizeY, roomCount);
-		BuildWalls (map, sizeX, sizeY);
+		BuildWalls (map, sizeX, sizeY, roomCount);
+
+		spawnPlayer(map, thirdPerson);
 		
 		printToConsole (map, sizeX, sizeY);
 	
@@ -48,6 +37,40 @@ public class LevelGenerator : MonoBehaviour
 		void Update ()
 		{
 	
+		}
+
+		public static void spawnPlayer(int[,] _map, bool perspective){
+
+		int[,] start;
+		start = getRoom (_map, 1);
+
+		int sizeX = start.GetUpperBound (0);
+		int sizeZ = start.GetUpperBound (1);
+		
+		int skyChoice = (int)(Random.Range(1,8));
+		string sky = "Sky"+skyChoice.ToString();
+		Debug.Log (sky);
+		
+		bool playerSpawned = false;
+		string playerView = "";
+
+		if(!perspective){
+			playerView = "FP_Player";
+		} else if(perspective){
+			playerView = "Player";
+		}
+		
+		for (int i = 0; i < sizeX; i++) {
+			for (int j = 0; j < sizeZ; j++) {
+				if(start[i,j] == 1 && !playerSpawned){
+					GameObject player = (GameObject) Instantiate(Resources.Load("FP_Player"),new Vector3(i+5,5,j+5),Quaternion.identity);
+					Skybox skybox = (Skybox)player.GetComponentInChildren(typeof(Skybox));
+					skybox.material = (Material)Resources.Load(sky);
+					playerSpawned = true;
+				}
+			}
+		}
+
 		}
 
 		public static int[,] CreateLevelSquares (int _sizeX, int _sizeY, int _nbrRooms)
@@ -285,39 +308,85 @@ public class LevelGenerator : MonoBehaviour
 	}
 
 	
-	static void BuildFloor (int[,] _map, int _sizeX, int _sizeY, int rooms)
+	static void BuildFloor (int[,] _map, int _sizeX, int _sizeZ, int rooms)
 	{
-		
-		for (int k = 1; k <= rooms; k++) {
-			Color roomColor = new Color (Random.Range (0.0f, 1.0f), Random.Range (0.0f, 1.0f), Random.Range (0.0f, 1.0f));
-			for (int i = 0; i < _sizeX; i++) {
-				for (int j = 0; j < _sizeY; j++) {
-					if (_map [i, j] == k) {
-						GameObject tile = (GameObject)Instantiate (Resources.Load ("FloorTile"), new Vector3 (i, 0, j), Quaternion.identity);
-						tile.renderer.material.color = roomColor;
-					} else if(_map [i, j] == -1){
-						GameObject tile = (GameObject)Instantiate (Resources.Load ("FloorTile"), new Vector3 (i, 0, j), Quaternion.identity);
-						tile.renderer.material.color = new Color (Random.Range (0.0f, 1.0f), Random.Range (0.0f, 1.0f), Random.Range (0.0f, 1.0f));
-					}
-					
-				}
-			}
-			
 
-				}
+
+		Mesh mesh = new Mesh();
+		mesh.name = "Floor";
+		GameObject floor = new GameObject ("Floor");
+		mesh.vertices = new Vector3[] {new Vector3(0,0,0),new Vector3 (0, 0, _sizeZ),new Vector3 (_sizeX, 0, _sizeZ),new Vector3 (_sizeX, 0, 0)};
+		mesh.uv = new Vector2[] {new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 0)};
+		mesh.triangles = new int[] {0, 1, 2, 0 , 2 , 3};
+		mesh.RecalculateNormals ();
+
+		MeshFilter meshFilter = (MeshFilter)floor.AddComponent(typeof(MeshFilter));
+		meshFilter.mesh = mesh;
+
+		MeshRenderer renderer = (MeshRenderer)floor.AddComponent(typeof(MeshRenderer));
+		floor.renderer.material.color = new Color (1,1,1);
+
+		MeshCollider collider = (MeshCollider)floor.AddComponent(typeof(MeshCollider));
+
+	
+		
+//		for (int k = 1; k <= rooms; k++) {
+//			Color roomColor = new Color (Random.Range (0.0f, 1.0f), Random.Range (0.0f, 1.0f), Random.Range (0.0f, 1.0f));
+//			for (int i = 0; i < _sizeX; i++) {
+//				for (int j = 0; j < _sizeZ; j++) {
+//					if (_map [i, j] == k) {
+//						GameObject tile = (GameObject)Instantiate (Resources.Load ("FloorTile"), new Vector3 (i, 0, j), Quaternion.identity);
+//						tile.renderer.material.color = roomColor;
+//					} else if(_map [i, j] == -1){
+//						GameObject tile = (GameObject)Instantiate (Resources.Load ("FloorTile"), new Vector3 (i, 0, j), Quaternion.identity);
+//						tile.renderer.material.color = new Color (Random.Range (0.0f, 1.0f), Random.Range (0.0f, 1.0f), Random.Range (0.0f, 1.0f));
+//					}
+//					
+//				}
+//			}
+//			
+//
+//				}
 		}
 
-	static void BuildWalls(int[,] _map, int _sizeX, int _sizeY){
+	static void BuildWalls(int[,] _map, int _sizeX, int _sizeY, int rooms){
+
+		Vector3[] colors = new Vector3[rooms+3];
+
+		for(int k = 0 ; k < rooms + 2; k++){
+			colors[k] = new Vector3(Random.Range (0.0f, 1.0f), Random.Range (0.0f, 1.0f), Random.Range (0.0f, 1.0f));
+
+		}
+	
+		int wallColor = 0;
+
 		for (int i = 1; i < _sizeX - 1; i++) {
 			for (int j = 1; j < _sizeY - 1; j++) {
+
 				if(_map[i,j] == 0 && (_map[i,j+1] != 0 || _map[i,j-1] != 0)){
-					GameObject wall = (GameObject)Instantiate (Resources.Load ("WallTile"), new Vector3 (i, 0, j), Quaternion.identity);
+
+					if(_map[i,j+1] > _map[i,j-1])
+						wallColor = _map[i,j+1] + 2;
+					else if(_map[i,j-1] > _map[i,j+1])
+						wallColor = _map[i,j-1] + 2;
+
+					GameObject wall = (GameObject)Instantiate (Resources.Load ("WallPiece"), new Vector3 (i, 0, j), Quaternion.identity);
+					wall.renderer.material.color = new Color (colors[wallColor].x, colors[wallColor].y, colors[wallColor].z);
 				}
+
 				if(_map[i,j] == 0 && (_map[i+1,j] != 0 || _map[i-1,j] != 0)){
-					GameObject wall = (GameObject)Instantiate (Resources.Load ("WallTile"), new Vector3 (i, 0, j), Quaternion.identity);
+
+						if(_map[i+1,j] > _map[i-1,j])
+							wallColor = _map[i+1,j] + 2;
+						else if(_map[i-1,j] > _map[i+1,j])
+							wallColor = _map[i-1,j] + 2;
+
+					GameObject wall = (GameObject)Instantiate (Resources.Load ("WallPiece"), new Vector3 (i, 0, j), Quaternion.identity);
+					wall.renderer.material.color = new Color (colors[wallColor].x, colors[wallColor].y, colors[wallColor].z);
 				}
 			}
 		}
+		
 				
 	}
 	

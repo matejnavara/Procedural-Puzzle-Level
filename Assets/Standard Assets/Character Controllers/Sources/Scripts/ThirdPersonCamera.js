@@ -8,7 +8,7 @@ private var _target : Transform;
 var distance = 7.0;
 
 // the height we want the camera to be above the target
-var height = 10.0;
+var height = 3.0;
 
 var angularSmoothLag = 0.3;
 var angularMaxSpeed = 15.0;
