@@ -151,7 +151,7 @@ public class BSPTree : MonoBehaviour {
 				switch(levelGrid.getTile(i,j)){
 				case 1:
 					GameObject tile = (GameObject)Instantiate(Resources.Load("FloorTile"), new Vector3(transform.position.x - (transform.localScale.x/2) + i, transform.position.y + transform.localScale.y/2, transform.position.z - (transform.localScale.z/2) + j), Quaternion.identity);
-					tile.renderer.material.color = new Color(Random.Range(0.0f,1.0f),Random.Range(0.0f,1.0f), Random.Range(0.0f,1.0f));
+					tile.GetComponent<Renderer>().material.color = new Color(Random.Range(0.0f,1.0f),Random.Range(0.0f,1.0f), Random.Range(0.0f,1.0f));
 					//new Color(tile.GetComponent<RoomCreator>().getColor().r, tile.GetComponent<RoomCreator>().getColor().g, tile.GetComponent<RoomCreator>().getColor().b);
 					break;
 				case 2:

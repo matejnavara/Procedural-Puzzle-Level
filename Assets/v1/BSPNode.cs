@@ -53,7 +53,7 @@ public class BSPNode {
 				_aSection.transform.position.x - ((xSplit - _aSection.transform.localScale.x)/2),
 				_aSection.transform.position.y,
 				_aSection.transform.position.z);
-			cube0.renderer.material.color = new Color(Random.Range(0.0f,1.0f),Random.Range(0.0f,1.0f), Random.Range(0.0f,1.0f));
+			cube0.GetComponent<Renderer>().material.color = new Color(Random.Range(0.0f,1.0f),Random.Range(0.0f,1.0f), Random.Range(0.0f,1.0f));
 			leftNode = new BSPNode();
 			leftNode.setCube(cube0);
 			leftNode.setParentNode(this);
@@ -65,7 +65,7 @@ public class BSPNode {
 				_aSection.transform.position.x + ((split1 - _aSection.transform.localScale.x)/2),
 				_aSection.transform.position.y,
 				_aSection.transform.position.z);
-			cube1.renderer.material.color = new Color(Random.Range(0.0f,1.0f),Random.Range(0.0f,1.0f), Random.Range(0.0f,1.0f));
+			cube1.GetComponent<Renderer>().material.color = new Color(Random.Range(0.0f,1.0f),Random.Range(0.0f,1.0f), Random.Range(0.0f,1.0f));
 			rightNode = new BSPNode();
 			rightNode.setCube(cube1);
 			rightNode.setParentNode(this);
@@ -86,7 +86,7 @@ public class BSPNode {
 				_aSection.transform.position.x,
 				_aSection.transform.position.y,
 				_aSection.transform.position.z - ((zSplit - _aSection.transform.localScale.z)/2));
-			cube0.renderer.material.color = new Color(Random.Range(0.0f,1.0f),Random.Range(0.0f,1.0f), Random.Range(0.0f,1.0f));
+			cube0.GetComponent<Renderer>().material.color = new Color(Random.Range(0.0f,1.0f),Random.Range(0.0f,1.0f), Random.Range(0.0f,1.0f));
 			leftNode = new BSPNode();
 			leftNode.setCube(cube0);	
 			leftNode.setParentNode(this);
@@ -97,7 +97,7 @@ public class BSPNode {
 				_aSection.transform.position.x,
 				_aSection.transform.position.y,
 				_aSection.transform.position.z+ ((zSplit1 - _aSection.transform.localScale.z)/2));
-			cube1.renderer.material.color = new Color(Random.Range(0.0f,1.0f),Random.Range(0.0f,1.0f), Random.Range(0.0f,1.0f));
+			cube1.GetComponent<Renderer>().material.color = new Color(Random.Range(0.0f,1.0f),Random.Range(0.0f,1.0f), Random.Range(0.0f,1.0f));
 			rightNode = new BSPNode();
 			rightNode.setCube(cube1);
 			rightNode.setParentNode(this);

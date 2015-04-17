@@ -9,6 +9,11 @@ public class LevelGenerator : MonoBehaviour
 		public int sizeY = 200;
 		public int nbrRooms = 18;
 		public bool thirdPerson = false;
+		public bool funkySky = false;
+
+		private static Room[] rooms;
+		private PuzzleGenerator puzzleGen;
+		private Player player;
 
 		// Use this for initialization
 		void Start ()
@@ -20,58 +25,42 @@ public class LevelGenerator : MonoBehaviour
 		int roomCount;
 		roomCount = FindRooms (map, sizeX, sizeY);
 
-		for (int i = 1; i <= roomCount; i++) {
-			FindNeighbour (map, i);
-		}
+		Debug.Log("ROOMCOUNT: " + roomCount.ToString());
+
+		rooms = new Room[roomCount+1];
+		createRooms (map, roomCount);
+
+		FindNeighbour (map, rooms);
+		
 
 		BuildFloor (map, sizeX, sizeY, roomCount);
 		BuildWalls (map, sizeX, sizeY, roomCount);
 
-		spawnPlayer(map, thirdPerson);
+		puzzleGen = new PuzzleGenerator ();
+		player = new Player ();
+
+		puzzleGen.ChooseLocked (rooms);
+		puzzleGen.LockDoors (rooms);
+		puzzleGen.ChoosePuzzle (rooms);
+		puzzleGen.GeneratePuzzles (rooms);
+
+
+		int[,] start = getRoom (map, 1);
+		player.spawnPlayer(start, thirdPerson, funkySky);
+
 		
 		printToConsole (map, sizeX, sizeY);
+
 	
 		}
 	
 		// Update is called once per frame
 		void Update ()
 		{
-	
-		}
-
-		public static void spawnPlayer(int[,] _map, bool perspective){
-
-		int[,] start;
-		start = getRoom (_map, 1);
-
-		int sizeX = start.GetUpperBound (0);
-		int sizeZ = start.GetUpperBound (1);
-		
-		int skyChoice = (int)(Random.Range(1,8));
-		string sky = "Sky"+skyChoice.ToString();
-		Debug.Log (sky);
-		
-		bool playerSpawned = false;
-		string playerView = "";
-
-		if(!perspective){
-			playerView = "FP_Player";
-		} else if(perspective){
-			playerView = "Player";
-		}
-		
-		for (int i = 0; i < sizeX; i++) {
-			for (int j = 0; j < sizeZ; j++) {
-				if(start[i,j] == 1 && !playerSpawned){
-					GameObject player = (GameObject) Instantiate(Resources.Load("FP_Player"),new Vector3(i+5,5,j+5),Quaternion.identity);
-					Skybox skybox = (Skybox)player.GetComponentInChildren(typeof(Skybox));
-					skybox.material = (Material)Resources.Load(sky);
-					playerSpawned = true;
-				}
-			}
-		}
 
 		}
+
+
 
 		public static int[,] CreateLevelSquares (int _sizeX, int _sizeY, int _nbrRooms)
 		{
@@ -88,9 +77,7 @@ public class LevelGenerator : MonoBehaviour
 
 						for (int j = _roomPosX; j < _roomPosX + _roomSizeX; j++) {
 								for (int k = _roomPosY; k < _roomPosY + _roomSizeY; k++) {
-										_newMap [j, k] = 1;
-//										GameObject tile = (GameObject)Instantiate (Resources.Load ("FloorTile"), new Vector3 (j, 0, k), Quaternion.identity);
-//										tile.renderer.material.color = new Color (Random.Range (0.0f, 1.0f), Random.Range (0.0f, 1.0f), Random.Range (0.0f, 1.0f));
+										_newMap [j, k] = 1;									
 								}
 						}
 
@@ -141,7 +128,6 @@ public class LevelGenerator : MonoBehaviour
 				return roomNum;
 	
 		}
-	
 
 
 	static int[,] getRoom(int[,] _map, int _roomNum){
@@ -164,148 +150,195 @@ public class LevelGenerator : MonoBehaviour
 		return room;
 		
 	}
+
+	static void createRooms(int[,] _map, int _roomNum){
+		
+		for (int i = 0; i <= _roomNum; i++) {
+			int[,] tempMap = getRoom(_map,i);
+			rooms[i] = new Room(tempMap,i);
+			printToConsole(tempMap,tempMap.GetUpperBound(0),tempMap.GetUpperBound(1));
+		}
+	}
 	
-	static void FindNeighbour(int[,] _map, int _roomID){
-		int sizeX = _map.GetUpperBound (0)+1;
-		int sizeY = _map.GetUpperBound (1)+1;
+	static void FindNeighbour(int[,] _map, Room[] _rooms){
 
-		int maxX = 0;
-		int maxY = 0;
-		int minX = sizeX;
-		int minY = sizeY;
+			foreach (Room element in _rooms) {
+						if (element != null) {
 
-		for (int i = 0; i < sizeX; i++) {
-			for (int j = 0; j < sizeY; j++) {
-				if(_map[i,j] == _roomID){
-					if(i > maxX)
-						maxX = i;
-					if(i < minX)
-						minX = i;
-					if(j > maxY)
-						maxY = j;
-					if(j < minY)
-						minY = j;
-				}
-			}
-		}
+								int roomID = element.getID ();
 
-		string stats = " Max X: " + maxX.ToString() + " Min X: " + minX.ToString() + " Max Y: " + maxY.ToString() + " Min Y: " + minY.ToString() ;
-		Debug.Log (stats);
+								int sizeX = _map.GetUpperBound (0) + 1;
+								int sizeY = _map.GetUpperBound (1) + 1;
 
-		//Check right
-		bool foundRight = false;
+								int maxX = 0;
+								int maxY = 0;
+								int minX = sizeX;
+								int minY = sizeY;
 
-		int rightMax = 0;
-		int rightMin = sizeY;
-		int rightRoom = 0;
-		int rightX = 0;
+								for (int i = 0; i < sizeX; i++) {
+										for (int j = 0; j < sizeY; j++) {
+												if (_map [i, j] == roomID) {
+														if (i > maxX)
+																maxX = i;
+														if (i < minX)
+																minX = i;
+														if (j > maxY)
+																maxY = j;
+														if (j < minY)
+																minY = j;
+												}
+										}
+								}
 
-		for (int i = maxX; i < sizeX; i++) {
-			if(!foundRight){
-			for (int j = minY; j < maxY; j++) {
-				if(_map[i,j] != _roomID && _map[i,j] != 0){
+								//string stats = " For Room " + roomID.ToString () + "Max X: " + maxX.ToString () + " Min X: " + minX.ToString () + " Max Y: " + maxY.ToString () + " Min Y: " + minY.ToString ();
+								//Debug.Log (stats);
 
-						rightRoom = _map[i,j];
-						rightX = i;
-						foundRight = true;
+								//Check right
+								bool foundRight = false;
 
-						if(j > rightMax)
-							rightMax = j;
-						if(j < rightMin)
-							rightMin = j;
-				}
-			}	
-		}
+								int rightMax = 0;
+								int rightMin = sizeY;
+								int rightRoom = 0;
+								int rightX = 0;
 
-		}
+								for (int i = maxX; i < sizeX; i++) {
+										if (!foundRight) {
+												for (int j = minY; j < maxY; j++) {
+														if (_map [i, j] != roomID && _map [i, j] != 0) {
 
-		if(foundRight){
-			int rightRandom = Random.Range (rightMin, rightMax - 3);
-			connectRight (_map, _roomID, rightRandom, rightX);
+																rightRoom = _map [i, j];
+																rightX = i;
+																foundRight = true;
 
-			string foundR = "RIGHT: Found room " + rightRoom.ToString() + "  between Y: " + rightMin.ToString() + " and " + rightMax.ToString() + " at X: " + rightX.ToString();
-			Debug.Log(foundR);
-		}
+																if (j > rightMax)
+																		rightMax = j;
+																if (j < rightMin)
+																		rightMin = j;
+														}
+												}	
+										}
+
+								}
+
+								if (foundRight) {
+										int rightRandom = Random.Range (rightMin, rightMax - 3);
+										connectRight (_map, roomID, rightRoom, rightRandom, rightX);
+										//rooms[rightRoom].addConnection(roomID);
+
+										//string foundR = "RIGHT: Found room " + rightRoom.ToString () + "  between Y: " + rightMin.ToString () + " and " + rightMax.ToString () + " at X: " + rightX.ToString ();
+										//Debug.Log (foundR);
+								}
 
 
-		//Check down
-		bool foundDown = false;
+								//Check down
+								bool foundDown = false;
 		
-		int downMax = 0;
-		int downMin = sizeX;
-		int downRoom = 0;
-		int downY = 0;
+								int downMax = 0;
+								int downMin = sizeX;
+								int downRoom = 0;
+								int downY = 0;
 		
-		for (int j = minY; j > 0; j--) {
-			if(!foundDown){
-				for (int i = minX; i < maxX; i++) {
-					if(_map[i,j] != _roomID && _map[i,j] != 0 && _map[i,j] != -1){
+								for (int j = minY; j > 0; j--) {
+										if (!foundDown) {
+												for (int i = minX; i < maxX; i++) {
+														if (_map [i, j] != roomID && _map [i, j] != 0 && _map [i, j] != -1) {
 						
-						downRoom = _map[i,j];
-						downY = j;
-						foundDown = true;
+																downRoom = _map [i, j];
+																downY = j;
+																foundDown = true;
 						
-						if(i > downMax)
-							downMax = i;
-						if(i < downMin)
-							downMin = i;
-					}
-				}	
-			}
+																if (i > downMax)
+																		downMax = i;
+																if (i < downMin)
+																		downMin = i;
+														}
+												}	
+										}
 			
-		}
+								}
 
-		if(foundDown ){
-			int downRandom = Random.Range (downMin , downMax - 3);
-			string foundD = "DOWN: Found room " + downRoom.ToString() + "  between X: " + downMin.ToString() + " and " + downMax.ToString() + " at Y: " + downY.ToString();
-			connectDown(_map, _roomID, downRandom, downY);
+								if (foundDown) {
+										int downRandom = Random.Range (downMin, downMax - 3);
+										connectDown (_map, roomID, downRoom, downRandom, downY);
 
-			Debug.Log(foundD);
-		}
+										//string foundD = "DOWN: Found room " + downRoom.ToString () + "  between X: " + downMin.ToString () + " and " + downMax.ToString () + " at Y: " + downY.ToString ();
+										//Debug.Log (foundD);
+								}
+
+						}
+				}
 
 	}
 
-	static void connectRight(int[,] _map, int _roomID, int _rand, int _startX){
+	static void connectRooms(int _roomID, int _targetID, Vector2 _door){
+		rooms[_roomID].addConnection(_targetID);
+		rooms[_targetID].addConnection(_roomID);
+
+		rooms [_roomID].addDoorway (_door);
+		rooms [_targetID].addDoorway (_door);
+
+	}
+
+	static void connectRight(int[,] _map, int _roomID, int _targetID, int _startY, int _startX){
 		int sizeX = _map.GetUpperBound (0)+1;
 		int sizeY = _map.GetUpperBound (1)+1;
 
 		bool connected = false;
+		Vector2 doorway = new Vector2();
 
 		for (int i = _startX; i > 0; i--) {
 			if(!connected){
-				for (int j = _rand; j < _rand+3; j++) {
+				for (int j = _startY; j < _startY+3; j++) {
 					if(_map[i,j] == 0){
 						_map[i,j] = -1;
 					} else if( _map[i,j] == _roomID){
+						doorway = new Vector2(i+((_startX-i)/2), _startY+1);
+
 						connected = true;
 					}
-
 				}
 			}
 		}
 
+						connectRooms (_roomID, _targetID, doorway);
+		
+						string connectR = "ROOM : " + _roomID.ToString () + " is connected right to " + _targetID.ToString () + " with door at " + doorway.ToString ();
+						Debug.Log (connectR);
+				
+
 	}
 
-	static void connectDown(int[,] _map, int _roomID, int _rand, int _startY){
+	static void connectDown(int[,] _map, int _roomID, int _targetID, int _startX, int _startY){
 		int sizeX = _map.GetUpperBound (0)+1;
 		int sizeY = _map.GetUpperBound (1)+1;
 		
 		bool connected = false;
-		
+		Vector2 doorway = new Vector2();
+
 		for (int j = _startY; j < sizeY; j++) {
 			if(!connected){
-				for (int i = _rand; i < _rand+3; i++) {
+				for (int i = _startX; i < _startX+3; i++) {
 					if(_map[i,j] == 0){
 						_map[i,j] = -1;
 					} else if( _map[i,j] == _roomID){
+
+						doorway = new Vector2(_startX+1, _startY+((j - _startY)/2));
 						connected = true;
 					}
 					
 				}
 			}
 		}
+						connectRooms (_roomID, _targetID, doorway);
+
+		
+						string connectD = "ROOM : " + _roomID.ToString () + " is connected down to " + _targetID.ToString () + " with door at " + doorway.ToString ();
+						Debug.Log (connectD);
+				
 		
 	}
+
+
 
 	
 	static void BuildFloor (int[,] _map, int _sizeX, int _sizeZ, int rooms)
@@ -324,29 +357,10 @@ public class LevelGenerator : MonoBehaviour
 		meshFilter.mesh = mesh;
 
 		MeshRenderer renderer = (MeshRenderer)floor.AddComponent(typeof(MeshRenderer));
-		floor.renderer.material.color = new Color (1,1,1);
+		floor.GetComponent<Renderer>().material.color = new Color (1,1,1);
 
 		MeshCollider collider = (MeshCollider)floor.AddComponent(typeof(MeshCollider));
-
 	
-		
-//		for (int k = 1; k <= rooms; k++) {
-//			Color roomColor = new Color (Random.Range (0.0f, 1.0f), Random.Range (0.0f, 1.0f), Random.Range (0.0f, 1.0f));
-//			for (int i = 0; i < _sizeX; i++) {
-//				for (int j = 0; j < _sizeZ; j++) {
-//					if (_map [i, j] == k) {
-//						GameObject tile = (GameObject)Instantiate (Resources.Load ("FloorTile"), new Vector3 (i, 0, j), Quaternion.identity);
-//						tile.renderer.material.color = roomColor;
-//					} else if(_map [i, j] == -1){
-//						GameObject tile = (GameObject)Instantiate (Resources.Load ("FloorTile"), new Vector3 (i, 0, j), Quaternion.identity);
-//						tile.renderer.material.color = new Color (Random.Range (0.0f, 1.0f), Random.Range (0.0f, 1.0f), Random.Range (0.0f, 1.0f));
-//					}
-//					
-//				}
-//			}
-//			
-//
-//				}
 		}
 
 	static void BuildWalls(int[,] _map, int _sizeX, int _sizeY, int rooms){
@@ -371,7 +385,7 @@ public class LevelGenerator : MonoBehaviour
 						wallColor = _map[i,j-1] + 2;
 
 					GameObject wall = (GameObject)Instantiate (Resources.Load ("WallPiece"), new Vector3 (i, 0, j), Quaternion.identity);
-					wall.renderer.material.color = new Color (colors[wallColor].x, colors[wallColor].y, colors[wallColor].z);
+					wall.GetComponent<Renderer>().material.color = new Color (colors[wallColor].x, colors[wallColor].y, colors[wallColor].z);
 				}
 
 				if(_map[i,j] == 0 && (_map[i+1,j] != 0 || _map[i-1,j] != 0)){
@@ -382,13 +396,15 @@ public class LevelGenerator : MonoBehaviour
 							wallColor = _map[i-1,j] + 2;
 
 					GameObject wall = (GameObject)Instantiate (Resources.Load ("WallPiece"), new Vector3 (i, 0, j), Quaternion.identity);
-					wall.renderer.material.color = new Color (colors[wallColor].x, colors[wallColor].y, colors[wallColor].z);
+					wall.GetComponent<Renderer>().material.color = new Color (colors[wallColor].x, colors[wallColor].y, colors[wallColor].z);
 				}
 			}
 		}
 		
 				
 	}
+
+
 	
 		static void printToConsole (int[,] _map, int _sizeX, int _sizeY)
 		{
@@ -403,6 +419,22 @@ public class LevelGenerator : MonoBehaviour
 				}
 		
 				Debug.Log (print);
+		}
+
+
+	static void printRoomData(Room[] _rooms){
+
+		foreach (Room element in _rooms) {
+			if(element != null){
+				List<int> ls =  element.getConnections();
+				Debug.Log("Room " + element.getID().ToString() + " has connections: ");
+				foreach(int room in ls)
+					Debug.Log(room);
+				
+				
+			}
+		}
+
 		}
 
 }
