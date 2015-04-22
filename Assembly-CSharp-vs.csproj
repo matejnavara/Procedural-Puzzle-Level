@@ -46,12 +46,16 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\DoorScript.cs" />
+     <Compile Include="Assets\InteractController.cs" />
+     <Compile Include="Assets\KeyScript.cs" />
      <Compile Include="Assets\LevelGenerator.cs" />
      <Compile Include="Assets\Player.cs" />
      <Compile Include="Assets\Puzzle01.cs" />
      <Compile Include="Assets\PuzzleGenerator.cs" />
+     <Compile Include="Assets\PuzzleKey.cs" />
      <Compile Include="Assets\Room.cs" />
-     <Compile Include="Assets\door.cs" />
+     <Compile Include="Assets\SwitchScript.cs" />
      <Compile Include="Assets\v1\BSPNode.cs" />
      <Compile Include="Assets\v1\BSPTree.cs" />
      <Compile Include="Assets\v1\Digger.cs" />

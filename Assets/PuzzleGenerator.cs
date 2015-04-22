@@ -5,7 +5,10 @@ using System.Collections.Generic;
 public class PuzzleGenerator : MonoBehaviour {
 
 	Puzzle01 puzzle1;
+	int lockedRooms;
+	int puzzleRooms;
 
+	List<int> freeRooms = new List<int> ();
 
 	// Use this for initialization
 	void Start () {
@@ -23,8 +26,8 @@ public class PuzzleGenerator : MonoBehaviour {
 		List<int> twoConnect = new List<int> ();
 		List<int> threeConnect = new List<int> ();
 
-		int lockedRooms;
-		int puzzleRooms;
+		lockedRooms = 0;
+		puzzleRooms = 0;
 
 		foreach (Room element in rooms) {
 			int connections = element.getConnectionNum();
@@ -39,10 +42,24 @@ public class PuzzleGenerator : MonoBehaviour {
 
 		}
 
+		//Every deadend is a locked room
 		foreach (int connection in oneConnect) {
+			//Dont choose starting room
 			if(connection != 1){
 				rooms[connection].setLocked(true);
-				Debug.Log("ROOM " + rooms[connection].getID().ToString() + " IS LOCKED");
+				lockedRooms++;
+				Debug.Log("ROOM " + rooms[connection].getID().ToString() + " IS LOCKED: 1 door");
+			}
+
+				}
+
+		//Approx 50% chance of locked room with 2 entrances
+		foreach (int connection in twoConnect) {
+			float rand = Random.Range(1f,10f);
+
+			if(rand > 5 && connection != 1){
+				rooms[connection].setLocked(true);
+				Debug.Log("ROOM " + rooms[connection].getID().ToString() + " IS LOCKED: 2 doors");
 			}
 
 				}
@@ -52,10 +69,8 @@ public class PuzzleGenerator : MonoBehaviour {
 
 	public void ChoosePuzzle(Room[] rooms){
 
-		List<int> locked;
-
-
 		foreach (Room element in rooms) {
+
 			if(element.getLocked()){
 
 				int lockedNum = element.getID();
@@ -63,15 +78,26 @@ public class PuzzleGenerator : MonoBehaviour {
 				int[] connections = element.getConnections().ToArray();
 				int roomNum = connections[temp];
 
-				if(!rooms[roomNum].getLocked()){
+				if(!rooms[roomNum].getLocked() && rooms[roomNum].getPuzzle() == 0){
 					rooms[roomNum].setPuzzle(lockedNum);
+					rooms[lockedNum].assignLock();
 					Debug.Log("ROOM " + roomNum.ToString() + " becomes puzzle room to unlock ROOM " + lockedNum.ToString());
 
 				}
 
 
+			} else if(!element.getLocked()){
+				freeRooms.Add(element.getID());
 			}
-				}
+		}
+
+		foreach (Room element in rooms) {
+			if(element.getLocked() && !element.assigned()){
+				Debug.Log("This would produce a key puzzle for room: " + element.getID());
+			}
+		}
+
+
 		}
 
 	public void GeneratePuzzles(Room[] rooms){
@@ -80,25 +106,44 @@ public class PuzzleGenerator : MonoBehaviour {
 
 				puzzle1 = new Puzzle01(element.getArea(),element.getPuzzle());
 
-						}
+						} 
 				}
 
 		}
 
 	public void LockDoors(Room[] rooms){
-		Dictionary<GameObject,int> d = new Dictionary<GameObject, int>();
+
+
+
 				foreach (Room element in rooms) {
-						if (element.getLocked ()) {
+						 if (element.getLocked ()) {
 								Vector2[] doors = element.getDoorways ().ToArray ();
+								Color keyColor = new Color (Random.Range (0.0f, 1.0f), Random.Range (0.0f, 1.0f), Random.Range (0.0f, 1.0f));
 								foreach (Vector2 pos in doors) {
 										
 										GameObject lockedDoor = (GameObject)Instantiate (Resources.Load ("LockedDoor"), new Vector3 (pos.x, 0, pos.y), Quaternion.identity);
 										lockedDoor.name = "LockedDoor"+element.getID();
+										lockedDoor.GetComponentInChildren<Renderer>().material.color = keyColor;
+									
+
+								}
+								//Creating a coloured locked door with matching key
+								if(!element.assigned()){
+									int tempRand = Random.Range(0,freeRooms.Count);
+									int keyChoice = freeRooms[tempRand];
+									PuzzleKey key1 = new PuzzleKey(rooms[keyChoice].getArea(),element.getID(),keyColor);
+									
+									Debug.Log("Created key for room " + element.getID() + " within room " + keyChoice);
+									
 								}
 
 						}
 
 				}
 		}
+
+
+
+
 
 }

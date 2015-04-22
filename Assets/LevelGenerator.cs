@@ -40,11 +40,13 @@ public class LevelGenerator : MonoBehaviour
 		player = new Player ();
 
 		puzzleGen.ChooseLocked (rooms);
-		puzzleGen.LockDoors (rooms);
 		puzzleGen.ChoosePuzzle (rooms);
 		puzzleGen.GeneratePuzzles (rooms);
+		puzzleGen.LockDoors (rooms);
 
 
+		
+		
 		int[,] start = getRoom (map, 1);
 		player.spawnPlayer(start, thirdPerson, funkySky);
 
@@ -270,12 +272,12 @@ public class LevelGenerator : MonoBehaviour
 
 	}
 
-	static void connectRooms(int _roomID, int _targetID, Vector2 _door){
+	static void connectRooms(int _roomID, int _targetID, Vector2 _door, Vector2 _targetDoor){
 		rooms[_roomID].addConnection(_targetID);
 		rooms[_targetID].addConnection(_roomID);
 
 		rooms [_roomID].addDoorway (_door);
-		rooms [_targetID].addDoorway (_door);
+		rooms [_targetID].addDoorway (_targetDoor);
 
 	}
 
@@ -285,6 +287,7 @@ public class LevelGenerator : MonoBehaviour
 
 		bool connected = false;
 		Vector2 doorway = new Vector2();
+		Vector2 targetDoorway = new Vector2();
 
 		for (int i = _startX; i > 0; i--) {
 			if(!connected){
@@ -292,7 +295,8 @@ public class LevelGenerator : MonoBehaviour
 					if(_map[i,j] == 0){
 						_map[i,j] = -1;
 					} else if( _map[i,j] == _roomID){
-						doorway = new Vector2(i+((_startX-i)/2), _startY+1);
+						targetDoorway = new Vector2(_startX, _startY+1);
+						doorway = new Vector2(i,_startY+1);
 
 						connected = true;
 					}
@@ -300,7 +304,7 @@ public class LevelGenerator : MonoBehaviour
 			}
 		}
 
-						connectRooms (_roomID, _targetID, doorway);
+						connectRooms (_roomID, _targetID, doorway, targetDoorway);
 		
 						string connectR = "ROOM : " + _roomID.ToString () + " is connected right to " + _targetID.ToString () + " with door at " + doorway.ToString ();
 						Debug.Log (connectR);
@@ -314,6 +318,7 @@ public class LevelGenerator : MonoBehaviour
 		
 		bool connected = false;
 		Vector2 doorway = new Vector2();
+		Vector2 targetDoorway = new Vector2();
 
 		for (int j = _startY; j < sizeY; j++) {
 			if(!connected){
@@ -322,14 +327,15 @@ public class LevelGenerator : MonoBehaviour
 						_map[i,j] = -1;
 					} else if( _map[i,j] == _roomID){
 
-						doorway = new Vector2(_startX+1, _startY+((j - _startY)/2));
+						targetDoorway = new Vector2(_startX+1, _startY);
+						doorway = new Vector2(_startX+1, j);
 						connected = true;
 					}
 					
 				}
 			}
 		}
-						connectRooms (_roomID, _targetID, doorway);
+						connectRooms (_roomID, _targetID, doorway,targetDoorway);
 
 		
 						string connectD = "ROOM : " + _roomID.ToString () + " is connected down to " + _targetID.ToString () + " with door at " + doorway.ToString ();
@@ -353,11 +359,16 @@ public class LevelGenerator : MonoBehaviour
 		mesh.triangles = new int[] {0, 1, 2, 0 , 2 , 3};
 		mesh.RecalculateNormals ();
 
+
 		MeshFilter meshFilter = (MeshFilter)floor.AddComponent(typeof(MeshFilter));
 		meshFilter.mesh = mesh;
 
 		MeshRenderer renderer = (MeshRenderer)floor.AddComponent(typeof(MeshRenderer));
-		floor.GetComponent<Renderer>().material.color = new Color (1,1,1);
+		//renderer.material.color = new Color (1,1,1);
+		Material floorMat = (Material)Resources.Load ("Materials/Materials/BlackBrick");
+	
+		renderer.material = floorMat;
+
 
 		MeshCollider collider = (MeshCollider)floor.AddComponent(typeof(MeshCollider));
 	
@@ -377,6 +388,8 @@ public class LevelGenerator : MonoBehaviour
 		for (int i = 1; i < _sizeX - 1; i++) {
 			for (int j = 1; j < _sizeY - 1; j++) {
 
+				bool built = false;
+
 				if(_map[i,j] == 0 && (_map[i,j+1] != 0 || _map[i,j-1] != 0)){
 
 					if(_map[i,j+1] > _map[i,j-1])
@@ -384,9 +397,12 @@ public class LevelGenerator : MonoBehaviour
 					else if(_map[i,j-1] > _map[i,j+1])
 						wallColor = _map[i,j-1] + 2;
 
-					GameObject wall = (GameObject)Instantiate (Resources.Load ("WallPiece"), new Vector3 (i, 0, j), Quaternion.identity);
-					wall.GetComponent<Renderer>().material.color = new Color (colors[wallColor].x, colors[wallColor].y, colors[wallColor].z);
+					GameObject wallAlong = (GameObject)Instantiate (Resources.Load ("WallTile"), new Vector3 (i, 0, j), Quaternion.identity);
+					wallAlong.GetComponentInChildren<Renderer>().material.color = new Color (colors[wallColor].x, colors[wallColor].y, colors[wallColor].z,10f);
+					built = true;
+
 				}
+
 
 				if(_map[i,j] == 0 && (_map[i+1,j] != 0 || _map[i-1,j] != 0)){
 
@@ -395,9 +411,9 @@ public class LevelGenerator : MonoBehaviour
 						else if(_map[i-1,j] > _map[i+1,j])
 							wallColor = _map[i-1,j] + 2;
 
-					GameObject wall = (GameObject)Instantiate (Resources.Load ("WallPiece"), new Vector3 (i, 0, j), Quaternion.identity);
-					wall.GetComponent<Renderer>().material.color = new Color (colors[wallColor].x, colors[wallColor].y, colors[wallColor].z);
-				}
+					GameObject wallUp = (GameObject)Instantiate (Resources.Load ("WallTile"), new Vector3 (i, 0, j), Quaternion.identity);
+					wallUp.GetComponentInChildren<Renderer>().material.color = new Color (colors[wallColor].x, colors[wallColor].y, colors[wallColor].z, 5f);
+					}
 			}
 		}
 		

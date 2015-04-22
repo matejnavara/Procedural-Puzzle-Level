@@ -1,24 +1,23 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Player : MonoBehaviour{
 
 	public static GameObject player;
 	private Vector3 pos;
+	private List<string> keys;
 	
 	// Use this for initialization
 	void Start () {
-	
+		player.name = "Player";
+		player.tag = "Player";
+		keys = new List<string> ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-		pos.x = player.transform.position.x;
-		pos.y = player.transform.position.y;
-		pos.z = player.transform.position.z;
-
-		Debug.Log("Player Pos: " + pos.ToString());
 	
 	}
 
@@ -30,7 +29,7 @@ public class Player : MonoBehaviour{
 		int sizeZ = _map.GetUpperBound (1);
 		
 		int skyChoice = (int)(Random.Range(1,8));
-		string sky = "Sky"+skyChoice.ToString();
+		string sky = "Sky/Sky"+skyChoice.ToString();
 		Debug.Log ("Chosen sky " + skyChoice);
 		
 		bool playerSpawned = false;
@@ -46,8 +45,6 @@ public class Player : MonoBehaviour{
 			for (int j = 0; j < sizeZ; j++) {
 				if(_map[i,j] == 1 && !playerSpawned){
 					player = (GameObject) Instantiate(Resources.Load("FP_Player"),new Vector3(i+5,5,j+5),Quaternion.identity);
-					player.name = "Player";
-					player.tag = "Player";
 					Skybox skybox = (Skybox)player.GetComponentInChildren(typeof(Skybox));
 					skybox.material = (Material)Resources.Load(sky);
 					if(skyBool)
@@ -62,7 +59,24 @@ public class Player : MonoBehaviour{
 	}
 
 	public Vector3 getPos(){
+
+		pos = this.gameObject.transform.position;
 		return pos;
+	}
+
+	public void setKey(string i){
+		keys.Add (i);
+	}
+
+	public bool hasKey(string Id){
+		if (keys.Contains (Id)) {
+						Debug.Log ("Player has Key to " + Id);
+						return true;
+				} else {
+						Debug.Log ("Player does not have Key to " + Id);
+						return false;
+				}
+
 	}
 
 }

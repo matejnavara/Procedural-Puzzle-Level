@@ -9,8 +9,8 @@ public class Room {
 	private List<int> connections;
 	private List<Vector2> doorways;
 	private bool isConnected;
-	private bool isPuzzle;
 	private bool isLocked;
+	private bool lockAssigned;
 	private int puzzleTo;
 
 	public Room(int[,] _Map, int _roomID){
@@ -19,7 +19,6 @@ public class Room {
 		connections = new List<int> ();
 		doorways = new List<Vector2> ();
 		isConnected = false;
-		isPuzzle = false;
 		isLocked = false;
 
 		puzzleTo = 0;
@@ -69,6 +68,14 @@ public class Room {
 	public bool getLocked(){
 		return isLocked;
 	}
+
+	public void assignLock(){
+		lockAssigned = true;
+	}
+
+	public bool assigned(){
+		return lockAssigned;
+		}
 
 	public void setPuzzle(int s){
 		puzzleTo = s;

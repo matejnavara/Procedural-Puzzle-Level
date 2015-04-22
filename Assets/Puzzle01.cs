@@ -50,15 +50,7 @@ public class Puzzle01 : MonoBehaviour{
 
 		}
 
-	void onSwitch(){
-		if (!isSwitched) {
-			switch01.GetComponent<Renderer>().material.color = new Color (0,1,0);
-			isSwitched = true;
 
-
-				}
-
-		}
 
 
 
