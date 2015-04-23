@@ -21,12 +21,13 @@ public class DoorScript : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider col){
-
-		if (col.gameObject.tag == "Player" && col.gameObject.GetComponent<Player>().hasKey(doorId) && !doorOpen) {
-			doorOpen = true;
-			DoorControl("Open");
-			Debug.Log("DOOR OPENED WITH KEY");
-			sound.Play();
+		if (!doorOpen) {
+						if (col.gameObject.tag == "Player" && col.gameObject.GetComponent<Player> ().hasKey (doorId)) {
+								doorOpen = true;
+								DoorControl ("Open");
+								Debug.Log ("DOOR OPENED WITH KEY");
+								sound.Play ();
+						}
 				}
 		}
 	

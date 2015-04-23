@@ -10,6 +10,7 @@ public class LevelGenerator : MonoBehaviour
 		public int nbrRooms = 18;
 		public bool thirdPerson = false;
 		public bool funkySky = false;
+		public bool sonic = false;
 
 		private static Room[] rooms;
 		private PuzzleGenerator puzzleGen;
@@ -48,7 +49,7 @@ public class LevelGenerator : MonoBehaviour
 		
 		
 		int[,] start = getRoom (map, 1);
-		player.spawnPlayer(start, thirdPerson, funkySky);
+		player.spawnPlayer(start, thirdPerson, funkySky, sonic);
 
 		
 		printToConsole (map, sizeX, sizeY);

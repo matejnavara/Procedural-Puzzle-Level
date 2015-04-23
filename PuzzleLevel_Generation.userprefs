@@ -1,16 +1,19 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Player.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\PuzzleGenerator.cs">
     <Files>
-      <File FileName="Assets\Player.cs" Line="76" Column="47" />
-      <File FileName="Assets\LevelGenerator.cs" Line="82" Column="21" />
+      <File FileName="Assets\PuzzleGenerator.cs" Line="140" Column="38" />
+      <File FileName="Assets\Player.cs" Line="65" Column="6" />
+      <File FileName="Assets\LevelGenerator.cs" Line="21" Column="4" />
       <File FileName="Assets\Room.cs" Line="1" Column="1" />
-      <File FileName="Assets\PuzzleGenerator.cs" Line="137" Column="10" />
-      <File FileName="Assets\SwitchScript.cs" Line="27" Column="3" />
-      <File FileName="Assets\DoorScript.cs" Line="33" Column="1" />
-      <File FileName="Assets\Puzzle01.cs" Line="34" Column="8" />
-      <File FileName="Assets\KeyScript.cs" Line="22" Column="15" />
-      <File FileName="Assets\PuzzleKey.cs" Line="27" Column="6" />
+      <File FileName="Assets\DoorScript.cs" Line="24" Column="19" />
+      <File FileName="Assets\Puzzle01.cs" Line="40" Column="16" />
+      <File FileName="Assets\KeyScript.cs" Line="36" Column="4" />
+      <File FileName="Assets\PuzzleKey.cs" Line="41" Column="54" />
+      <File FileName="Assets\ShardScript.cs" Line="25" Column="74" />
+      <File FileName="Assets\PuzzleShard.cs" Line="36" Column="9" />
+      <File FileName="Assets\PlayerHUD.cs" Line="60" Column="33" />
+      <File FileName="Assets\SwitchScript.cs" Line="39" Column="22" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -4,10 +4,11 @@ using System.Collections;
 public class KeyScript : MonoBehaviour {
 
 	string keyId;
+	Color keyColor;
 	string doorId;
-	AudioSource sound;
+	AudioClip sound;
 	bool collected;
-	bool fin;
+
 
 	// Use this for initialization
 	void Start () {
@@ -17,30 +18,35 @@ public class KeyScript : MonoBehaviour {
 
 		Debug.Log ("KEY ID: " + keyId);
 		doorId = "LockedDoor" + id;
-		sound = GetComponent<AudioSource> ();
+		sound = GetComponent<AudioSource> ().clip;
 		collected = false;
-		fin = false;
+
 	}
 
 	void OnTriggerEnter(Collider col){
 
 
 		if (col.gameObject.tag == "Player" && !collected) {
-			sound.Play();
+			AudioSource.PlayClipAtPoint(sound,this.gameObject.transform.position);
 			col.GetComponent<Player>().setKey(doorId); 
 			Debug.Log("PICKED UP " + keyId);
 			collected = true;
-			fin = true;
 
+			col.GetComponent<PlayerHUD>().addKey(keyColor);
+
+			Destroy(this.gameObject);
 		}
+
 	}
+
+	public void setColor(Color c){
+		keyColor = c;
+		}
 
 	
 	// Update is called once per frame
 	void Update () {
-		if (fin) {
-			DestroyObject(this.gameObject);
-				}
+
 	
 	}
 }

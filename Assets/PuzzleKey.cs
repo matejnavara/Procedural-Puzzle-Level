@@ -38,6 +38,7 @@ public class PuzzleKey : MonoBehaviour {
 			key = (GameObject)Instantiate (Resources.Load ("Key"), new Vector3 (select.x, 0, select.y), Quaternion.identity);
 			key.name = "Key"+_unlockID.ToString();
 			key.GetComponent<Renderer>().material.color = _keyColor;
+			key.GetComponent<KeyScript>().setColor(_keyColor);
 			
 			spawned = true;
 		}

@@ -5,9 +5,12 @@ using System.Collections.Generic;
 public class PuzzleGenerator : MonoBehaviour {
 
 	Puzzle01 puzzle1;
+	PuzzleShard shards;
+
 	int lockedRooms;
 	int puzzleRooms;
 
+	private int shardsSpawned = 0;
 	List<int> freeRooms = new List<int> ();
 
 	// Use this for initialization
@@ -86,14 +89,8 @@ public class PuzzleGenerator : MonoBehaviour {
 				}
 
 
-			} else if(!element.getLocked()){
+			} else if(!element.getLocked() && element.getID() != 0){
 				freeRooms.Add(element.getID());
-			}
-		}
-
-		foreach (Room element in rooms) {
-			if(element.getLocked() && !element.assigned()){
-				Debug.Log("This would produce a key puzzle for room: " + element.getID());
 			}
 		}
 
@@ -107,7 +104,18 @@ public class PuzzleGenerator : MonoBehaviour {
 				puzzle1 = new Puzzle01(element.getArea(),element.getPuzzle());
 
 						} 
+
+						if(element.getLocked()){
+
+				PuzzleShard shard = new PuzzleShard(element.getArea());
+				shardsSpawned++;
+
+			}
+
+
 				}
+
+		Debug.Log("GENERATED: " + shardsSpawned + " shards.");
 
 		}
 
@@ -141,6 +149,17 @@ public class PuzzleGenerator : MonoBehaviour {
 
 				}
 		}
+
+	public int getShards(){
+		return shardsSpawned;
+		}
+
+	public void removeShard(){
+		shardsSpawned--;
+		Debug.Log("Only " + shardsSpawned + " shards left to collect.");
+	}
+
+
 
 
 

@@ -5,14 +5,19 @@ using System.Collections.Generic;
 public class Player : MonoBehaviour{
 
 	public static GameObject player;
+	public PlayerHUD gui;
 	private Vector3 pos;
+	private int shardsCollected;
 	private List<string> keys;
 	
 	// Use this for initialization
 	void Start () {
 		player.name = "Player";
 		player.tag = "Player";
+		gui = player.gameObject.GetComponent<PlayerHUD> ();
+		shardsCollected = 0;
 		keys = new List<string> ();
+
 	}
 	
 	// Update is called once per frame
@@ -22,7 +27,7 @@ public class Player : MonoBehaviour{
 	}
 
 	
-	public void spawnPlayer(int[,] _map, bool perspective, bool skyBool){
+	public void spawnPlayer(int[,] _map, bool perspective, bool skyBool, bool sonic){
 			
 		
 		int sizeX = _map.GetUpperBound (0);
@@ -55,6 +60,10 @@ public class Player : MonoBehaviour{
 				}
 			}
 		}
+
+		if (sonic) {
+			//player.
+				}
 		
 	}
 
@@ -62,6 +71,17 @@ public class Player : MonoBehaviour{
 
 		pos = this.gameObject.transform.position;
 		return pos;
+	}
+
+	public void collectShard(){
+			shardsCollected++;
+			gui.addShard ();
+			Debug.Log("PLAYER NOW HAS " + shardsCollected + " SHARDS");
+	}
+	
+	public int hasShards(){
+		return shardsCollected;
+		
 	}
 
 	public void setKey(string i){

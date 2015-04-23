@@ -49,11 +49,7 @@ public class Puzzle01 : MonoBehaviour{
 	void Awake(){
 
 		}
-
-
-
-
-
+	
 	// Use this for initialization
 	void Start () {
 	
