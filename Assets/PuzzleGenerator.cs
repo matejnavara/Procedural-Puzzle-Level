@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class PuzzleGenerator : MonoBehaviour {
 
 	Puzzle01 puzzle1;
+	Puzzle02 puzzle2;
 	PuzzleShard shards;
 
 	int lockedRooms;
@@ -60,10 +61,15 @@ public class PuzzleGenerator : MonoBehaviour {
 		foreach (int connection in twoConnect) {
 			float rand = Random.Range(1f,10f);
 
-			if(rand > 5 && connection != 1){
+			if(lockedRooms < 4 && connection != 1){
 				rooms[connection].setLocked(true);
 				Debug.Log("ROOM " + rooms[connection].getID().ToString() + " IS LOCKED: 2 doors");
 			}
+
+//			if(rand > 5 && connection != 1){
+//				rooms[connection].setLocked(true);
+//				Debug.Log("ROOM " + rooms[connection].getID().ToString() + " IS LOCKED: 2 doors");
+//			}
 
 				}
 
@@ -101,7 +107,18 @@ public class PuzzleGenerator : MonoBehaviour {
 		foreach (Room element in rooms) {
 						if (element.getPuzzle() > 0) {
 
-				puzzle1 = new Puzzle01(element.getArea(),element.getPuzzle());
+				int i = Random.Range(1,3);
+				Debug.Log("CHOSEN PUZZLE: " + i);
+
+				if(i == 1){
+					puzzle1 = new Puzzle01(element.getArea(),element.getPuzzle());
+
+				} else if(i == 2){
+					puzzle2 = new Puzzle02(element.getArea(),element.getPuzzle());
+				
+				} else {
+					Debug.Log("DID NOT FIND PUZZLE: " + i);
+				}
 
 						} 
 

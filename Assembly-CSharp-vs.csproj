@@ -53,11 +53,13 @@
      <Compile Include="Assets\Player.cs" />
      <Compile Include="Assets\PlayerHUD.cs" />
      <Compile Include="Assets\Puzzle01.cs" />
+     <Compile Include="Assets\Puzzle02.cs" />
      <Compile Include="Assets\PuzzleGenerator.cs" />
      <Compile Include="Assets\PuzzleKey.cs" />
      <Compile Include="Assets\PuzzleShard.cs" />
      <Compile Include="Assets\Room.cs" />
      <Compile Include="Assets\ShardScript.cs" />
+     <Compile Include="Assets\SwitchBallScript.cs" />
      <Compile Include="Assets\SwitchScript.cs" />
      <Compile Include="Assets\v1\BSPNode.cs" />
      <Compile Include="Assets\v1\BSPTree.cs" />

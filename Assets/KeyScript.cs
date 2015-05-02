@@ -43,10 +43,5 @@ public class KeyScript : MonoBehaviour {
 		keyColor = c;
 		}
 
-	
-	// Update is called once per frame
-	void Update () {
 
-	
-	}
 }

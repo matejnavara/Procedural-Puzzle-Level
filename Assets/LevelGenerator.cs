@@ -20,13 +20,16 @@ public class LevelGenerator : MonoBehaviour
 		void Start ()
 		{
 
-		int[,] map;
-		map = CreateLevelSquares (sizeX, sizeY, nbrRooms);
+		int[,] map = new int[sizeX, sizeY];
+		int roomCount = 0;
 
-		int roomCount;
-		roomCount = FindRooms (map, sizeX, sizeY);
+		while (roomCount < 6) {
+			map = CreateLevelSquares (sizeX, sizeY, nbrRooms);
+			roomCount = FindRooms (map, sizeX, sizeY);
+			Debug.Log("ROOMCOUNT: " + roomCount.ToString());
+				}
 
-		Debug.Log("ROOMCOUNT: " + roomCount.ToString());
+		//Debug.Log("ROOMCOUNT: " + roomCount.ToString());
 
 		rooms = new Room[roomCount+1];
 		createRooms (map, roomCount);
